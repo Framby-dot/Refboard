@@ -370,6 +370,19 @@ input[type=range] { width: 100%; accent-color: var(--accent); }
 }
 #zen:active { opacity: 1; }
 body.zen #zen { opacity: .28; }
+#gray {
+  position: absolute; right: 60px; top: 8px; z-index: 3;
+  width: 44px; height: 44px; border-radius: 50%; border: 0; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; background: rgba(0,0,0,.38);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  opacity: .6; cursor: pointer;
+}
+#gray:active { opacity: 1; }
+#gray.on { opacity: 1; background: var(--ac); }
+body.zen #gray:not(.on) { opacity: .28; }
+/* étude des valeurs : affichage seulement, les fichiers gardent leurs couleurs */
+body.gray .it canvas, body.gray .it img { filter: grayscale(1); }
 body.zen header, body.zen #dock, body.zen #bar, body.zen #menu, body.zen #cnt { display: none !important; }
 
 .sw { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -594,6 +607,7 @@ body.zen header, body.zen #dock, body.zen #bar, body.zen #menu, body.zen #cnt { 
 </header>
 <div id="stage">
   <div id="world"><svg id="ink" xmlns="http://www.w3.org/2000/svg"></svg></div>
+  <button id="gray" aria-label="Voir en niveaux de gris" aria-pressed="false" title="Niveaux de gris (étude des valeurs)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button>
   <button id="zen" aria-label="Masquer l’interface" title="Masquer / afficher l’interface"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg></button>
   <span id="cnt"></span>
   <div id="mq"></div>
@@ -1497,7 +1511,7 @@ function endMarquee(apply_){
   mq=null;mqEl.style.display="none";
 }
 stage.addEventListener("pointerdown",e=>{
-  if(e.target.closest("#zen"))return;
+  if(e.target.closest("#zen,#gray"))return;
   if(editing&&e.target.closest(".nt")&&editing.contains(e.target))return;
   if(editing)endEdit();
   stage.setPointerCapture(e.pointerId);P.set(e.pointerId,{x:e.clientX,y:e.clientY});
@@ -1711,6 +1725,13 @@ $("#zen").onclick=()=>{
   $("#zen").innerHTML=on?ZEN_OFF:ZEN_ON;$("#zen").setAttribute("aria-label",on?"Afficher l’interface":"Masquer l’interface");
   menu.hidden=true;
   requestAnimationFrame(()=>{v.y+=t0-stage.getBoundingClientRect().top;apply()});
+};
+
+/* ---- niveaux de gris (étude des valeurs) ---- */
+$("#gray").onclick=()=>{
+  const on=document.body.classList.toggle("gray"),b=$("#gray");
+  b.classList.toggle("on",on);b.setAttribute("aria-pressed",on);
+  b.setAttribute("aria-label",on?"Revenir aux couleurs":"Voir en niveaux de gris");
 };
 
 /* ---- vue ---- */
